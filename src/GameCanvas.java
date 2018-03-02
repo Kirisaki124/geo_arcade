@@ -4,6 +4,8 @@ import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Random;
 
 public class GameCanvas extends JPanel {
 
@@ -51,35 +53,62 @@ public class GameCanvas extends JPanel {
 
     }
     int squareY = 0;
-    int squareX = 0;
-    int collide = 0;
+
+    public void createSquares() {
+        Random rand = new Random();
+        squareList.clear();
+        for (int i = 0; i < 3; i++) {
+            squareList.add(new Square());
+            squareList.get(i).setX(rand.nextInt(200));
+            //squareList.get(i).setY(498);
+        }
+    }
+
     public void run(){
         this.squareY ++;
-        this.squareX ++;
     }
-    public void renderAll(){
+    ArrayList<Square> squareList = new ArrayList<Square>();
+
+    public void renderAll() {
+        int done = 0;
+        for (Square square: squareList) {
+            if (square.getY() > 600) {
+                done++;
+            }
+        }
 //         Draw images
         this.graphics.drawImage(this.background, 0, 0, null);
-        this.graphics.drawImage(this.player,this.positionPlayerX - 20,this.getPositionPlayerY - 40,null);
-//        for (int i = 0; i < 1000; i+=30) {
+        this.graphics.drawImage(this.player, this.positionPlayerX - 20, this.getPositionPlayerY - 40, null);
 
-        if (this.collide == 1){
-            if (this.squareX < 0){
-                this.collide = 0;
+        if (done == 3) {
+            createSquares();
+        }
+        for (int i = 0; i < squareList.size(); i++) {
+            this.squareList.get(i).draw(square, graphics);
+//            this.graphics.drawImage(this.square, squareList.get(i).getX(), this.squareY, null);
+        }
+        for (int i = 0; i < squareList.size(); i++) {
+            if (squareList.get(i).isCollided() == false) {
+                if (this.squareList.get(i).getX() < 0) {
+                    this.squareList.get(i).setCollided(true);
+                }
+                this.squareList.get(i).setX(this.squareList.get(i).getX() - 2);
             }
-            this.squareX -= 4;
+            else {
+                if (this.squareList.get(i).getX() > 360) {
+                    this.squareList.get(i).setCollided(false);
+                }
+                this.squareList.get(i).setX(this.squareList.get(i).getX() + 2);
+            }
+            Random rand  = new Random();
+            this.squareList.get(i).setY(this.squareList.get(i).getY() + rand.nextInt(5));
+//            System.out.println(String.format("%d", this.squareList.get(i).getY()));
         }
 
-        else if (this.collide == 0) {
-            if (this.squareX > 400 - 20){
-                this.collide = 1;
-            }
-            this.squareX += 2;
+        for (int i = 0; i < squareList.size(); i++) {
+//            System.out.println(String.format("%d / %d", this.squareList.get(i).getX(), this.squareList.get(i).getY()));
         }
 
-        this.graphics.drawImage(this.square, this.squareX, this.squareY, null);
-        System.out.println(String.format("%d", this.squareX));
-        System.out.println(String.format("%d", this.collide));
         this.repaint();
     }
 

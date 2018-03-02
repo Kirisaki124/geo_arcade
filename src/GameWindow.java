@@ -29,6 +29,9 @@ public class GameWindow extends JFrame{
     }
     private long lastTime = 0;
     public void GameLoop(){
+        this.gameCanvas.createSquares();
+        this.gameCanvas.renderAll();
+//        int i = 0;
         while(true){
             long currentTime = System.nanoTime();
             if (currentTime - lastTime >= 17_000_000) {
