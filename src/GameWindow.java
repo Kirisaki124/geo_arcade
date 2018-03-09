@@ -4,41 +4,58 @@ import java.awt.event.MouseMotionAdapter;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 
-public class GameWindow extends JFrame{
+public class GameWindow extends JFrame {
+
     GameCanvas gameCanvas;
-    public GameWindow (){
+    private long lastTime = 0;
+
+    public GameWindow() {
+        this.setup();
+        this.setupCanvas();
+        this.listener();
+        this.setVisible(true);
+    }
+
+    private void setup() {
         this.setSize(400, 600);
+    }
+
+    private void setupCanvas() {
         this.gameCanvas = new GameCanvas();
         this.add(this.gameCanvas);
+    }
+
+    private void listener() {
+        this.mouseMotionListener();
+        this.windowListener();
+    }
+
+    private void mouseMotionListener() {
         this.addMouseMotionListener(new MouseMotionAdapter() {
             @Override
             public void mouseMoved(MouseEvent e) {
-//                System.out.println(e.getX() + " / " + e.getY());
-                gameCanvas.positionPlayerX = e.getX();
-                gameCanvas.getPositionPlayerY = e.getY();
+                gameCanvas.player.x = e.getX();
+                gameCanvas.player.y = e.getY();
             }
         });
+    }
+
+    private void windowListener() {
         this.addWindowListener(new WindowAdapter() {
             @Override
             public void windowClosing(WindowEvent e) {
                 System.exit(1);
             }
         });
-//        System.exit(1);
-        this.setVisible(true);
     }
-    private long lastTime = 0;
-    public void GameLoop(){
-        this.gameCanvas.createSquares();
-        this.gameCanvas.renderAll();
-//        int i = 0;
-        while(true){
+
+    public void gameLoop() {
+        while (true) {
             long currentTime = System.nanoTime();
-            if (currentTime - lastTime >= 17_000_000) {
-//                gameCanvas.squareY++;
-                this.gameCanvas.run();
+            if (currentTime - this.lastTime >= 17_000_000) {
+                this.gameCanvas.runAll();
                 this.gameCanvas.renderAll();
-                lastTime = currentTime;
+                this.lastTime = currentTime;
             }
         }
     }

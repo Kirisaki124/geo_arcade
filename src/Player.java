@@ -1,24 +1,14 @@
-import javax.imageio.ImageIO;
-import javax.swing.*;
-import java.awt.*;
-import java.awt.image.BufferedImage;
-import java.io.File;
-import java.io.IOException;
 
-public class Player extends JPanel{
-    BufferedImage player;
-
-    @Override
-    protected void paintComponent(Graphics g) {
-        try {
-            this.player = ImageIO.read(new File("resources/player/straight.png"));
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+public class Player extends GameObject {
+    private PlayerShoot playerShoot;
+    public Player() {
+        this.image = Utils.loadImage("resources/player/straight.png");
+        this.playerShoot = new PlayerShoot();
     }
 
     @Override
-    protected void paintChildren(Graphics g) {
-        g.drawImage(this.player,0,0,null);
+    public void run() {
+        super.run();
+        this.playerShoot.run(this);
     }
 }
